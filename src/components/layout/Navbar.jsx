@@ -303,8 +303,7 @@ const Navbar = () => {
 
                 <Link to="/register"
                   style={{
-                    border: "none",
-
+                    
                     outline: "none",
 
                     cursor: "pointer",
@@ -331,7 +330,7 @@ const Navbar = () => {
                       "0 4px 20px rgba(0,0,0,0.04)",
                   }}
                 >
-                  Start Free
+                  Get Started
                 </Link>
 
               </Magnetic>
@@ -467,8 +466,7 @@ const Navbar = () => {
               style={{
                 marginTop: "1rem",
 
-                border: "none",
-
+                
                 outline: "none",
 
                 cursor: "pointer",
@@ -492,12 +490,12 @@ const Navbar = () => {
                   "1px solid rgba(0,0,0,0.08)",
               }}
             >
-              Start Free
+              Get Started
             </Link>
 
             {/* BLACK SECONDARY */}
 
-            <button
+            <Link to="/login" onClick={() => setOpen(false)}
               style={{
                 border: "none",
 
@@ -521,12 +519,12 @@ const Navbar = () => {
                 fontSize: "1rem",
               }}
             >
-              View Demo
-            </button>
+              Sign in
+            </Link>
 
             {/* PLUM COMPLEMENTARY */}
 
-            <button
+            <a href="#marketplace" onClick={() => setOpen(false)}
               style={{
                 border: "none",
 
@@ -551,7 +549,7 @@ const Navbar = () => {
               }}
             >
               Explore Marketplace
-            </button>
+            </a>
 
           </motion.div>
 

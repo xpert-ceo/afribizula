@@ -1,35 +1,46 @@
-import express from "express";
 import dotenv from "dotenv";
-import cors from "cors";
+import mongoose from "mongoose";
+import { loadConfig, ConfigError } from "./config/env.js";
+import { connectDB } from "./config/db.js";
+import { createApp } from "./app.js";
 
-import connectDB from "./config/db.js";
+dotenv.config({ quiet: true });
 
-import authRoutes from "./routes/authRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+async function main() {
+  let config;
+  try {
+    config = loadConfig();
+  } catch (e) {
+    if (e instanceof ConfigError) {
+      console.error(e.message);
+      process.exit(1);
+    }
+    throw e;
+  }
 
-dotenv.config();
+  try {
+    await connectDB(config.mongoUri);
+    console.log("MongoDB connected");
+  } catch (e) {
+    console.error(e.message);
+    process.exit(1);
+  }
 
-connectDB();
+  mongoose.connection.on("disconnected", () => console.warn("MongoDB disconnected"));
+  mongoose.connection.on("reconnected", () => console.log("MongoDB reconnected"));
 
-const app = express();
+  const app = createApp(config);
+  const server = app.listen(config.port, () => {
+    console.log(`Server running on ${config.port} (${config.nodeEnv})`);
+  });
 
-app.use(cors());
-app.use(express.json());
+  const shutdown = (signal) => {
+    console.log(`${signal} received, shutting down`);
+    server.close(() => mongoose.disconnect().finally(() => process.exit(0)));
+    setTimeout(() => process.exit(1), 10000).unref();
+  };
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
+}
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Bizula API Running...");
-});
-
-const PORT =
-  process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(
-    `Server running on ${PORT}`
-  );
-});    `Server running on ${PORT}`
-  );
-});
+main();

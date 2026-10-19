@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 import {
   FaXTwitter,
@@ -68,16 +69,8 @@ const footerLinks = [
         name: "Vision",
         href: "#vision",
       },
-
-      {
-        name: "Privacy Policy",
-        href: "/privacy",
-      },
-
-      {
-        name: "Terms of Service",
-        href: "/terms",
-      },
+      // Privacy Policy and Terms of Service links were removed because the pages do not exist yet.
+      // Add them back once the owner supplies the legal text (see docs/HANDOVER.md).
 
       {
         name: "Contact",
@@ -86,6 +79,14 @@ const footerLinks = [
     ],
   },
 ];
+
+// Social profiles. Links render only once a real URL is filled in (they were href="#" placeholders).
+const SOCIAL_LINKS = [
+  { Icon: FaXTwitter, label: "X (Twitter)", href: "" },
+  { Icon: FaInstagram, label: "Instagram", href: "" },
+  { Icon: FaTiktok, label: "TikTok", href: "" },
+  { Icon: FaThreads, label: "Threads", href: "" },
+].filter((s) => s.href);
 
 const Footer = () => {
   return (
@@ -289,12 +290,7 @@ const Footer = () => {
                 gap: "1rem",
               }}
             >
-              {[
-                FaXTwitter,
-                FaInstagram,
-                FaTiktok,
-                FaThreads,
-              ].map((Icon, i) => (
+              {SOCIAL_LINKS.map(({ Icon, label, href }, i) => (
                 <motion.a
                   key={i}
 
@@ -302,7 +298,10 @@ const Footer = () => {
                     y: -4,
                   }}
 
-                  href="#"
+                  href={href}
+                  aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
 
                   style={{
                     width: "54px",
@@ -397,7 +396,7 @@ const Footer = () => {
                   fontWeight: 500,
                 }}
               >
-                Newsletter
+                Join Bizula
               </span>
 
               <h3
@@ -417,7 +416,7 @@ const Footer = () => {
                     "1rem",
                 }}
               >
-                Stay Updated
+                Get Started
               </h3>
 
               <p
@@ -432,83 +431,27 @@ const Footer = () => {
                     "2rem",
                 }}
               >
-                Get updates on
-                Bizula features,
-                commerce tools,
-                logistics rollout,
-                and ecosystem
-                expansion.
+                Create an account to set up your business, manage inventory and record sales. (A newsletter sign-up is not available yet.)
               </p>
 
-              {/* INPUT */}
-
-              <div
+              {/* The previous newsletter form had no backend; replaced with a working link. */}
+              <Link
+                to="/register"
                 style={{
-                  display: "flex",
-
-                  flexDirection:
-                    "column",
-
-                  gap: "1rem",
+                  display: "block",
+                  textAlign: "center",
+                  width: "100%",
+                  padding: "1rem 1.2rem",
+                  borderRadius: "16px",
+                  background: "#7C3AED",
+                  color: "white",
+                  fontWeight: 600,
+                  fontSize: "0.95rem",
+                  textDecoration: "none",
                 }}
               >
-                <input
-                  type="email"
-
-                  placeholder="Enter your email"
-
-                  style={{
-                    width: "100%",
-
-                    border:
-                      "1px solid rgba(255,255,255,0.08)",
-
-                    background:
-                      "rgba(255,255,255,0.05)",
-
-                    color: "white",
-
-                    padding:
-                      "1rem 1.2rem",
-
-                    borderRadius:
-                      "16px",
-
-                    outline: "none",
-
-                    fontSize:
-                      "0.95rem",
-                  }}
-                />
-
-                <button
-                  style={{
-                    width: "100%",
-
-                    border: "none",
-
-                    cursor: "pointer",
-
-                    padding:
-                      "1rem 1.2rem",
-
-                    borderRadius:
-                      "16px",
-
-                    background:
-                      "#7C3AED",
-
-                    color: "white",
-
-                    fontWeight: 600,
-
-                    fontSize:
-                      "0.95rem",
-                  }}
-                >
-                  Subscribe
-                </button>
-              </div>
+                Create your account
+              </Link>
             </div>
           </motion.div>
         </div>

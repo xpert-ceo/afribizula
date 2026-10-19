@@ -1,264 +1,56 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Globe,
-} from "lucide-react";
-
-import GlassCard from "../../components/ui/GlassCard";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Mail, Lock } from "lucide-react";
 import Button from "../../components/ui/Button";
+import AuthLayout from "../../components/auth/AuthLayout";
+import AuthInput from "../../components/auth/AuthInput";
+import { useAuth, homeFor } from "../../context/AuthContext";
+import { errorMessage } from "../../lib/api";
 
 const Login = () => {
-  const [showPassword, setShowPassword] =
-    useState(false);
-  function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    setError("");
+    if (!email.trim() || !password) return setError("Enter your email and password.");
+    setSubmitting(true);
     try {
-      const userCredential =
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-      console.log(userCredential.user);
-
-      alert("Login Successful");
-    } catch (error) {
-      console.log(error);
-      alert(error.message);
+      const session = await login(email.trim(), password);
+      const from = location.state?.from;
+      const home = homeFor(session);
+      navigate(from && from.startsWith(home) ? from : home, { replace: true });
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <section className="auth-page">
-      <div className="auth-container">
-
-        <div className="auth-left">
-          <span className="auth-badge">
-            Welcome Back
-          </span>
-
-          <h1 className="auth-title">
-            Build.
-            <br />
-            Sell.
-            <br />
-            Deliver.
-            <br />
-            Grow.
-          </h1>
-
-          <p className="auth-subtitle">
-            The operating system for African
-            businesses.
-          </p>
-        </div>
-
-        <div className="auth-card">
-          <GlassCard>
-
-            <h2
-              style={{
-                marginBottom: "2rem",
-                color: "#111",
-              }}
-            >
-              Sign In
-            </h2>
-
-            <div className="form-group">
-
-              <div className="input-wrap">
-                <Mail size={18} />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                />
-              </div>
-
-              <div className="input-wrap">
-                <Lock size={18} />
-
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  placeholder="Password"
-                />
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowPassword(
-                      !showPassword
-                    )
-                  }
-                  className="eye-btn"
-                >
-                  {showPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
-
-              <Button>
-                Sign In
-              </Button>
-
-              <Button variant="secondary">
-                <div className="google-btn">
-                  <Globe size={18} />
-                  Continue With Google
-                </div>
-              </Button>
-
-              <Link
-                to="/forgot-password"
-                className="auth-link"
-              >
-                Forgot Password?
-              </Link>
-
-              <p className="bottom-text">
-                Don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="purple-link"
-                >
-                  Register
-                </Link>
-              </p>
-
-            </div>
-
-          </GlassCard>
-        </div>
-
-      </div>
-
-      <style>{authStyles}</style>
-    </section>
+    <AuthLayout badge="Welcome Back" title={["Build.", "Sell.", "Deliver.", "Grow."]}
+      subtitle="The operating system for African businesses." cardTitle="Sign In">
+      <form className="form-group" onSubmit={handleLogin} noValidate>
+        {location.state?.message && <div className="form-alert success">{location.state.message}</div>}
+        {error && <div className="form-alert error" role="alert">{error}</div>}
+        <AuthInput icon={Mail} type="email" placeholder="Email Address" autoComplete="email"
+          value={email} onChange={(e) => setEmail(e.target.value)} />
+        <AuthInput icon={Lock} type="password" placeholder="Password" autoComplete="current-password"
+          value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Button type="submit" disabled={submitting}>{submitting ? "Signing in…" : "Sign In"}</Button>
+        <Link to="/forgot-password" className="auth-link">Forgot Password?</Link>
+        <p className="bottom-text">
+          Don&apos;t have an account? <Link to="/register" className="purple-link">Register</Link>
+        </p>
+      </form>
+    </AuthLayout>
   );
 };
 
 export default Login;
-
-const authStyles = `
-.auth-page{
-min-height:100vh;
-background:#fafafa;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:2rem;
-}
-
-.auth-container{
-width:100%;
-max-width:1100px;
-display:grid;
-grid-template-columns:1fr 500px;
-gap:4rem;
-align-items:center;
-}
-
-.auth-title{
-font-size:4rem;
-line-height:1;
-font-weight:700;
-color:#111;
-margin-bottom:1rem;
-}
-
-.auth-subtitle{
-color:#666;
-max-width:500px;
-}
-
-.auth-badge{
-color:#7C3AED;
-font-weight:600;
-}
-
-.form-group{
-display:flex;
-flex-direction:column;
-gap:1rem;
-}
-
-.input-wrap{
-position:relative;
-display:flex;
-align-items:center;
-}
-
-.input-wrap svg:first-child{
-position:absolute;
-left:15px;
-color:#777;
-}
-
-.input-wrap input{
-width:100%;
-padding:1rem 3rem;
-border-radius:14px;
-border:1px solid rgba(0,0,0,.08);
-outline:none;
-font-size:16px;
-}
-
-.eye-btn{
-position:absolute;
-right:15px;
-border:none;
-background:none;
-cursor:pointer;
-}
-
-.google-btn{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:.5rem;
-}
-
-.auth-link,
-.purple-link{
-color:#7C3AED;
-text-decoration:none;
-}
-
-.bottom-text{
-text-align:center;
-color:#666;
-}
-
-@media(max-width:900px){
-.auth-container{
-grid-template-columns:1fr;
-}
-.auth-title{
-font-size:2.7rem;
-}
-}
-
-@media(max-width:500px){
-.auth-title{
-font-size:2rem;
-}
-}
-`;

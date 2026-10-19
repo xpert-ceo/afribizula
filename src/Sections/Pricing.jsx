@@ -60,6 +60,14 @@ const plans = [
   },
 ];
 
+// Features listed above that are NOT implemented in the current release (see docs/HANDOVER.md).
+// They are labelled "coming soon" so the page does not advertise them as available today.
+const ROADMAP = new Set([
+  "Smart Booking System", "Commitment Payments", "Invoice Creation", "Customer Booking Links",
+  "Invoice Management", "Order Tracking", "Bulk Pricing Engine", "Supplier Management",
+  "Logistics Integration", "B2B Marketplace Access",
+]);
+
 const Pricing = () => {
   return (
     <section
@@ -373,6 +381,7 @@ const Pricing = () => {
                     }}
                   >
                     {plan.price}
+                    <span style={{ fontSize: "1rem", fontWeight: 500, letterSpacing: 0, opacity: 0.7 }}> / month</span>
                   </h3>
 
                   <p
@@ -441,7 +450,9 @@ const Pricing = () => {
                         />
 
                         {feature}
-
+                        {ROADMAP.has(feature) && (
+                          <span style={{ fontSize: "0.75rem", opacity: 0.6 }}>(coming soon)</span>
+                        )}
                       </div>
 
                     )

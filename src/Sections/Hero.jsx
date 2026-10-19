@@ -235,8 +235,7 @@ const Hero = () => {
 
               <Link to="/register"
                 style={{
-                  border: "none",
-
+                  
                   cursor: "pointer",
 
                   padding:
@@ -261,14 +260,14 @@ const Hero = () => {
                     "0 8px 30px rgba(0,0,0,0.04)",
                 }}
               >
-                Start Free
+                Get Started
               </Link>
 
             </Magnetic>
 
             {/* BLACK SECONDARY */}
 
-            <button
+            <Link to="/login"
               style={{
                 border: "none",
 
@@ -290,12 +289,12 @@ const Hero = () => {
                 fontSize: "0.95rem",
               }}
             >
-              View Demo
-            </button>
+              Sign in
+            </Link>
 
             {/* PLUM COMPLEMENTARY */}
 
-            <button
+            <a href="#marketplace"
               style={{
                 border: "none",
 
@@ -318,7 +317,7 @@ const Hero = () => {
               }}
             >
               Explore Marketplace
-            </button>
+            </a>
 
           </motion.div>
 
